@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-func Read(file string) (Config, error) {
+func Read() (Config, error) {
 
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -17,7 +17,7 @@ func Read(file string) (Config, error) {
 
 	}
 
-	path := filepath.Join(home, file)
+	path := filepath.Join(home, ConfigFileName)
 
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -34,5 +34,27 @@ func Read(file string) (Config, error) {
 	}
 
 	return cfg, nil
+
+}
+
+func Write(cfg Config) error {
+	fullPath, err := GetConfigFilePath()
+	if err != nil {
+		return err
+	}
+
+	file, err := os.Create(fullPath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	err = encoder.Encode(cfg)
+	if err != nil {
+		return err
+	}
+
+	return nil
 
 }
