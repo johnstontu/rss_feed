@@ -1,10 +1,12 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"os"
 
 	"github.com/johnstontu/rss_feed/internal/config"
+	"github.com/johnstontu/rss_feed/internal/database"
 
 	_ "github.com/lib/pq"
 )
@@ -18,6 +20,15 @@ func main() {
 
 	var state State
 	state.config = &cfg
+
+	dbURL := state.config.DbURL
+	db, err := sql.Open("postgres", dbURL)
+	if err != nil {
+		fmt.Printf("%v", err)
+	}
+
+	dbQueries := database.New(db)
+	state.db = dbQueries
 
 	cmds := Commands{
 		command: make(map[string]func(*State, Command) error),

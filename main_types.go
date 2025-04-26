@@ -2,9 +2,11 @@ package main
 
 import (
 	"github.com/johnstontu/rss_feed/internal/config"
+	"github.com/johnstontu/rss_feed/internal/database"
 )
 
 type State struct {
+	db     *database.Queries
 	config *config.Config
 }
 
