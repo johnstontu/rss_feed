@@ -37,6 +37,7 @@ func main() {
 	cmds.register("login", handerLogin)
 	cmds.register("register", handlerRegister)
 	cmds.register("reset", handlerReset)
+	cmds.register("users", handlerUsers)
 
 	input := os.Args
 	if len(input) < 2 {

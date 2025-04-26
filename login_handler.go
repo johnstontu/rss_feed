@@ -70,3 +70,27 @@ func handlerReset(s *State, cmd Command) error {
 
 	return nil
 }
+
+func handlerUsers(s *State, cmd Command) error {
+
+	users, err := s.db.GetUsers(
+		context.Background(),
+	)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error fetching users %v\n", err)
+		os.Exit(1)
+	}
+
+	for _, user := range users {
+		if user.Name == s.config.CurrentUserName {
+			fmt.Printf("%+v (current)", user.Name)
+		} else {
+			fmt.Println(user.Name)
+		}
+
+	}
+
+	return nil
+
+}
