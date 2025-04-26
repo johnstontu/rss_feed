@@ -62,3 +62,11 @@ func handlerRegister(s *State, cmd Command) error {
 
 	return nil
 }
+
+func handlerReset(s *State, cmd Command) error {
+	s.db.DeleteUsers(
+		context.Background(),
+	)
+
+	return nil
+}
