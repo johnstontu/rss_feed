@@ -107,3 +107,43 @@ func handlerAgg(s *State, cmd Command) error {
 
 	return nil
 }
+
+func handlerAddFeed(s *State, cmd Command) error {
+
+	if len(cmd.arguments) < 2 {
+		fmt.Println("Needs more input arguments")
+		os.Exit(1)
+	}
+
+	name := cmd.arguments[0]
+	url := cmd.arguments[1]
+
+	currentUser, err := s.db.GetUser(
+		context.Background(),
+		s.config.CurrentUserName,
+	)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error fetching current user %v\n", err)
+		os.Exit(1)
+	}
+
+	feed, err := s.db.CreateFeed(
+		context.Background(),
+		database.CreateFeedParams{
+			ID:        uuid.New(),
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+			Name:      name,
+			Url:       url,
+			UserID:    currentUser.ID,
+		},
+	)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error creating feed %v\n", err)
+		os.Exit(1)
+	}
+
+	fmt.Printf("%+v\n", feed)
+
+	return nil
+}
