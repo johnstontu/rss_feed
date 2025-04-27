@@ -40,6 +40,7 @@ func main() {
 	cmds.register("users", handlerUsers)
 	cmds.register("agg", handlerAgg)
 	cmds.register("addfeed", handlerAddFeed)
+	cmds.register("feeds", handlerFeeds)
 
 	input := os.Args
 	if len(input) < 2 {
@@ -55,8 +56,6 @@ func main() {
 	}
 
 	cmds.run(&state, command)
-
-	fmt.Printf("%+v\n", cfg)
 
 	config.Write(cfg)
 

@@ -147,3 +147,20 @@ func handlerAddFeed(s *State, cmd Command) error {
 
 	return nil
 }
+
+func handlerFeeds(s *State, cmd Command) error {
+
+	feeds, err := s.db.GetFeeds(context.Background())
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error fetching current user %v\n", err)
+		os.Exit(1)
+	}
+
+	for _, feed := range feeds {
+		fmt.Printf("%v\n", feed.FeedName)
+		fmt.Printf("%v\n", feed.Url)
+		fmt.Printf("%v\n", feed.UserName.String)
+	}
+
+	return nil
+}
