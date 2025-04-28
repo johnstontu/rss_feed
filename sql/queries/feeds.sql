@@ -15,3 +15,11 @@ SELECT f.name as feed_name, f.url, u.name as user_name
 FROM feeds f
 LEFT JOIN users u
     ON user_id = u.id;
+
+-- name: GetFeed :one
+SELECT f.name as feed_name, f.url, u.name as user_name, f.id as feed_id
+FROM feeds f
+LEFT JOIN users u
+    ON user_id = u.id
+
+WHERE f.url = $1;

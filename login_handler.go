@@ -145,6 +145,8 @@ func handlerAddFeed(s *State, cmd Command) error {
 
 	fmt.Printf("%+v\n", feed)
 
+	handlerFollow(s, cmd)
+
 	return nil
 }
 
@@ -163,4 +165,83 @@ func handlerFeeds(s *State, cmd Command) error {
 	}
 
 	return nil
+}
+
+func handlerFollow(s *State, cmd Command) error {
+
+	if len(cmd.arguments) < 1 {
+		fmt.Println("Needs more input arguments")
+		os.Exit(1)
+	}
+
+	var url string
+
+	if len(cmd.arguments) == 2 {
+		url = cmd.arguments[1]
+	} else {
+		url = cmd.arguments[0]
+	}
+
+	currentUser, err := s.db.GetUser(
+		context.Background(),
+		s.config.CurrentUserName,
+	)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error fetching current user %v\n", err)
+		os.Exit(1)
+	}
+
+	feed, err := s.db.GetFeed(
+		context.Background(),
+		url,
+	)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error fetching feed %v\n", err)
+		os.Exit(1)
+	}
+
+	s.db.CreateFeedFollows(
+		context.Background(),
+		database.CreateFeedFollowsParams{
+			ID:        uuid.New(),
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+			UserID:    currentUser.ID,
+			FeedID:    feed.FeedID,
+		},
+	)
+
+	return nil
+
+}
+
+func handlerFollowing(s *State, cmd Command) error {
+
+	currentUser, err := s.db.GetUser(
+		context.Background(),
+		s.config.CurrentUserName,
+	)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error fetching current user %v\n", err)
+		os.Exit(1)
+	}
+
+	following, err := s.db.GetFeedFollowsForUser(
+		context.Background(),
+		currentUser.Name,
+	)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error fetching follows for user %v\n", err)
+		os.Exit(1)
+	}
+
+	for _, follow := range following {
+		fmt.Printf("%v\n", follow.UserName)
+		fmt.Printf("%v\n", follow.FeedName)
+
+	}
+
+	return nil
+
 }
